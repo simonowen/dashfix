@@ -1,4 +1,4 @@
-/.vs
+.vs
 .DS_Store
 *.o
 *.aps
@@ -6,12 +6,12 @@
 *.ncb
 *.plg
 *.suo
-/*.vcproj.*.user
-/*.vcxproj.user
-/*.sdf
-/*.opensdf
-/*.opendb
-/*.VC.db
-/ipch/
+*.vcproj.*.user
+*.vcxproj.user
+*.sdf
+*.opensdf
+*.opendb
+*.VC.db
+ipch/
 [Dd]ebug/
 [Rr]elease/

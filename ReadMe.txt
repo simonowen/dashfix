@@ -1,29 +1,51 @@
-OpenVR Dashboard Fixer v0.1
----------------------------
+DashFix (OpenVR DashBoard Fixer) v1.0
+-------------------------------------
 
-Prevents inputs from connected game controllers from interfering with OpenVR
-Dashboard navigation. This tends to be steering wheels and HOTAS devices, which
-have a rest position with a non-zero axis value.
+Inputs from connected game controllers can interfere with OpenVR Dashboard
+pointer navigation. The problem manifests itself as the inability to click
+buttons and other elements in the dashboard user interface.
 
-At present, directional input from ALL controllers is blocked. This could be
-changed to a whitelist/blacklist in a future version.
+Steering wheels and HOTAS devices are usually the cause, as they often have a
+rest position with a non-zero axis value, which the dashboard continually acts
+upon. It's inconvenient to disconnect them during dashboard use, and there's
+currently no way to tell Steam to ignore them.
 
-The implementation injects a DLL into Steam.exe and vrdashboard.exe, to patch
-calls to SDL_GetJoystickAxis so they always return zero. This process injection
-technique could upset some runtime virus scanners.
+DashFix lets you ignore the unwanted inputs, and use the dashboard normally.
 
-Please let me know if you find any other places where controllers are causing
-trouble. It may be as simple as adding extra modules or functions to the current
-list. 
 
 USAGE
 
-Simply run the EXE, and it will sit silently in the background doing its work.
-It doesn't matter if you start it before or after Steam, or if you restart Steam
-while it's running.
+- connect your game controllers
+- launch DashFix.exe
+- uncheck any controllers you don't want to use with the dashboard
+- optionally, select to have DashFix run on every Windows startup
+- click OK
 
-Launching the EXE a second time will prompt to close the running instance,
-however the code patches will remain in place until Steam/SteamVR is restarted.
+DashFix can be started before or after Steam, and re-run to change controller
+selection. Don't worry, ignored controllers still work as normal in all other
+games and applications.
+
+
+IMPLEMENTATION
+
+DashFix injects a DLL into Steam.exe and vrdashboard.exe, hooking calls to
+SDL_GetJoystickAxis so they return zero for some controllers. This process
+injection technique could upset some runtime virus scanners.
+
+Please let me know if you have any problems, or find other places where
+controllers are interfering with normal use.
+
+
+CHANGELOG
+
+v1.0
+- added individual controller selection
+- added optional launch on Windows startup
+- improved pre-hook checks and error handling
+- added MIT license
+
+v0.1
+- first public test release, blocking all controllers
 
 ---
 
