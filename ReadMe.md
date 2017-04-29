@@ -11,6 +11,9 @@ currently no way to tell Steam to ignore them.
 
 DashFix lets you ignore the unwanted inputs, and use the dashboard normally.
 
+## Install
+
+[Download the ".zip" file for the latest version](https://github.com/simonowen/dashfix/releases) and extract it wherever you'd like.
 
 ## Usage
 
