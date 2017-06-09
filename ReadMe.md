@@ -1,4 +1,6 @@
-# DashFix (OpenVR DashBoard Fixer) v1.0
+# DashFix (OpenVR DashBoard Fixer) v1.1
+
+## Introduction
 
 Inputs from connected game controllers can interfere with OpenVR Dashboard
 pointer navigation. The problem manifests itself as the inability to click
@@ -13,44 +15,48 @@ DashFix lets you ignore the unwanted inputs, and use the dashboard normally.
 
 ## Install
 
-[Download the ".zip" file for the latest version](https://github.com/simonowen/dashfix/releases) and extract it wherever you'd like.
-
-## Usage
-
-- Connect your game controllers
-- Launch DashFix.exe
-- Uncheck any controllers you don't want to use with the dashboard
-- Optionally, select to have DashFix run on every Windows startup. 
-  - The .exe only needs to run once until you shut down again, so checking this means you never have to manually run it. This also means if you want to "uninstall" the tool, just uncheck this, reboot, and delete the folder containing the .exe and .dll.
+- Connect any problematic game controllers
+- Download and run the [installer for the latest version](https://github.com/simonowen/dashfix/releases).
+- Select the controllers to block from the list
 - Click OK
 
-DashFix can be started before or after Steam, and re-run to change controller
-selection. Don't worry, ignored controllers still work as normal in all other
-games and applications.
+DashFix will continue running in the background, and start with Windows.
 
+To change which controllers are blocked, re-launch DashFix from the Start
+Menu shortcut. To deactivate it, uninstall from "Add or Remove Programs".
 
-## Implementation
+## Upgrade
+
+To upgrade an earlier version simply over-install with the latest version.
+
+## Internals
 
 DashFix injects a DLL into Steam.exe and vrdashboard.exe, hooking calls to
 SDL_GetJoystickAxis so they return zero for some controllers. This process
 injection technique could upset some runtime virus scanners.
 
+Source code is available from the [DashFix project page](https://github.com/simonowen/dashfix) on GitHub.
+
 Please let me know if you have any problems, or find other places where
 controllers are interfering with normal use.
 
-
 ## Changelog
 
-v1.0
+### v1.1
+- added installer/uninstaller to simplify use
+- removed option to start with Windows as it's the default behaviour
+- inverted checkboxes, so selected means blocked (thanks ljford7!)
+
+### v1.0
 - added individual controller selection
 - added optional launch on Windows startup
 - improved pre-hook checks and error handling
 - added MIT license
 
-v0.1
+### v0.1
 - first public test release, blocking all controllers
 
 ---
 
-Simon Owen
+Simon Owen  
 https://github.com/simonowen/dashfix

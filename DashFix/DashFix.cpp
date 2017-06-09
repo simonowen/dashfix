@@ -21,7 +21,6 @@
 
 const auto APP_NAME{ TEXT("DashFix") };
 const auto SETTINGS_KEY{ TEXT(R"(Software\SimonOwen\DashFix)") };
-const auto STARTUP_KEY{ TEXT(R"(Software\Microsoft\Windows\CurrentVersion\Run)") };
 const auto STEAM_KEY{ TEXT(R"(Software\Valve\Steam)") };
 
 HWND g_hDlg{ NULL };
@@ -208,7 +207,7 @@ void PopulateControllerList(
 				auto pJoyName = SDL_JoystickName(pJoystick);
 				if (pJoyName && *pJoyName)
 				{
-					// Initially checked.
+					// Controller enabled by default.
 					joy_list[pJoyName] = TRUE;
 				}
 			}
@@ -266,7 +265,7 @@ void PopulateControllerList(
 			lvi.pszText = const_cast<char *>(lfi.psz);
 			index = SendMessage(hListView, LVM_INSERTITEMA, 0, reinterpret_cast<LPARAM>(&lvi));
 
-			ListView_SetCheckState(hListView, index, joy.second);
+			ListView_SetCheckState(hListView, index, !joy.second);
 		}
 	}
 }
@@ -294,7 +293,7 @@ void SaveControllerList(
 			if (!SendMessage(hListView, LVM_GETITEMA, 0, reinterpret_cast<LPARAM>(&li)))
 				break;
 
-			DWORD dwData = ListView_GetCheckState(hListView, idx);
+			DWORD dwData = !ListView_GetCheckState(hListView, idx);
 			RegSetValueExA(
 				hkey,
 				szItem,
@@ -307,70 +306,6 @@ void SaveControllerList(
 		RegCloseKey(hkey);
 	}
 
-}
-
-BOOL IsStartedWithWindows()
-{
-	WCHAR szPath[MAX_PATH]{};
-
-	HKEY hkey;
-	if (RegCreateKey(
-		HKEY_CURRENT_USER,
-		STARTUP_KEY,
-		&hkey) == ERROR_SUCCESS)
-	{
-		DWORD cchValue{ _countof(szPath) };
-		DWORD dwType{ REG_SZ };
-
-		RegQueryValueEx(
-			hkey,
-			APP_NAME,
-			NULL,
-			&dwType,
-			reinterpret_cast<LPBYTE>(szPath),
-			&cchValue);
-
-		RegCloseKey(hkey);
-	}
-
-	// Return whether our Windows startup entry exists.
-	return szPath[0] ? TRUE : FALSE;
-}
-
-void SetStartedWithWindows(
-	_In_ BOOL fEnable)
-{
-	HKEY hkey;
-	if (RegCreateKey(
-		HKEY_CURRENT_USER,
-		STARTUP_KEY,
-		&hkey) == ERROR_SUCCESS)
-	{
-		if (!fEnable)
-		{
-			// Disable starting with Windows.
-			RegDeleteValue(hkey, APP_NAME);
-		}
-		else
-		{
-			WCHAR szPath[MAX_PATH];
-			GetModuleFileName(NULL, szPath, _countof(szPath));
-
-			// Form a command string containing our path with a --startup parameter.
-			std::wstring command =
-				TEXT("\"") + std::wstring(szPath) + TEXT("\" --startup");
-
-			// Enable starting us with Windows.
-			RegSetValueEx(
-				hkey,
-				APP_NAME,
-				0, REG_SZ,
-				reinterpret_cast<const BYTE*>(command.c_str()),
-				command.length() * sizeof(command[0]));
-		}
-
-		RegCloseKey(hkey);
-	}
 }
 
 INT_PTR CALLBACK DialogProc(
@@ -395,10 +330,6 @@ INT_PTR CALLBACK DialogProc(
 			// Populate the controller list from connected devices and the registry.
 			PopulateControllerList(hwndList);
 
-			// Set the initial startup checkbox state.
-			if (IsStartedWithWindows())
-				SendDlgItemMessage(hDlg, IDC_STARTUP, BM_SETCHECK, BST_CHECKED, 0L);
-
 			return TRUE;
 		}
 
@@ -414,10 +345,6 @@ INT_PTR CALLBACK DialogProc(
 				{
 					// Save the controller checkbox states to the registry.
 					SaveControllerList(GetDlgItem(hDlg, IDL_CONTROLLERS));
-
-					// Set or delete the Windows startup key.
-					SetStartedWithWindows(
-						SendDlgItemMessage(hDlg, IDC_STARTUP, BM_GETCHECK, 0, 0L) == BST_CHECKED);
 
 					DestroyWindow(hDlg);
 					return TRUE;
