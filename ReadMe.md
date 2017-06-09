@@ -16,7 +16,7 @@ DashFix lets you ignore the unwanted inputs, and use the dashboard normally.
 ## Install
 
 - Connect any problematic game controllers
-- Download and run the [installer for the latest version](https://github.com/simonowen/dashfix/releases).
+- Download and run the [installer for the latest version](https://github.com/simonowen/dashfix/releases/latest).
 - Select the controllers to block from the list
 - Click OK
 
